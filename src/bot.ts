@@ -70,9 +70,7 @@ export abstract class Bot extends EventEmitter {
         }
 
         let lastMessage = this.statusMessage;
-
         this.statusMessage = message;
-
         this.emit('status_message', new BotStatusChangeEvent(lastMessage, this.statusMessage));
     }
 

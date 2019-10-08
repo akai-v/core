@@ -137,13 +137,13 @@ export abstract class BaseClient extends EventEmitter {
     async sendRichTemplate(template: RichMessageTemplate, channel: Channel): Promise<UserMessage[]> {
         for (let richHandler of this.richHandlerList) {
             if (richHandler.canHandle(template)) {
-                return await richHandler.send(template, channel);
+                return richHandler.send(template, channel);
             }
         }
 
         for (let defaultRichHandler of this.defaultRichHandlerList) {
             if (defaultRichHandler.canHandle(template)) {
-                return await defaultRichHandler.send(template, channel);
+                return defaultRichHandler.send(template, channel);
             }
         }
 
