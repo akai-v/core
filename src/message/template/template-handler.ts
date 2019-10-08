@@ -46,9 +46,7 @@ export class MultiTextTemplateHandler extends TemplateHandler<BaseClient> {
         let list: UserMessage[] = [];
 
         for (let text of template.TextList) {
-            for (let message of await this.Client.sendText(text, channel)) {
-                list.push(message);
-            }
+            list.push(...(await this.Client.sendText(text, channel)));
         }
 
         return list;
