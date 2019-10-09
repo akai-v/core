@@ -51,6 +51,8 @@ export abstract class UserMessage {
 
     abstract async editText(text: string): Promise<UserMessage>;
 
+    abstract async delete(): Promise<boolean>;
+
     async editOrReplyText(text: string): Promise<UserMessage[]> {
         if (this.Editable) {
             return [ await this.editText(text) ];

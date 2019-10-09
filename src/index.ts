@@ -23,3 +23,5 @@ export * from './module/bot-module';
 export * from './module/module-manager';
 export * from './module/command/command-manager';
 export * from './module/command/parser/argument-parser';
+
+export * from './testing/test-util';

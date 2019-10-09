@@ -23,10 +23,11 @@ export class CommandManager extends EventEmitter {
     }
 
     processCommand(message: string, targetBot: Bot, sender: User, channel: Channel): boolean {
-        let messagePart = message.split(' ', 2);
+        let partList = message.split(' ');
+        let messagePart = [partList.shift(), partList.join(' ')];
 
         let command = messagePart[0];
-        let args = messagePart[1] || '';
+        let args = messagePart[1];
 
         let hasCommand = this.rawListeners(command).length !== 0;
 

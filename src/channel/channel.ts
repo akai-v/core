@@ -2,6 +2,7 @@ import { BaseClient } from "../client/base-client";
 import { RichMessageTemplate } from "../message/template/rich-message-template";
 import { UserMessage } from "../message/user-message";
 import { EventEmitter } from "events";
+import { ClientMessageEvent } from "../bot-event";
 
 /*
  * Created on Sun Oct 06 2019
@@ -46,11 +47,11 @@ export abstract class Channel extends EventEmitter {
 
     // EventEmiiter overrides
 
-    on(event: | 'message', listener: (...args: any[]) => void): this {
+    on(event: 'message', listener: (e: ClientMessageEvent) => void): this {
         return super.on(event, listener);
     }
 
-    once(event: 'message', listener: (...args: any[]) => void): this {
+    once(event: 'message', listener: (e: ClientMessageEvent) => void): this {
         return super.once(event, listener);
     }
     

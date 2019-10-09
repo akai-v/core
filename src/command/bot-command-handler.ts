@@ -23,13 +23,14 @@ export class BotCommandHandler {
     }
 
     parseNamespacedCommand(text: string) {
-        return text.split(BotCommandHandler.NAMESPACE_SEPARATOR, 2);
+        let parts = text.split(BotCommandHandler.NAMESPACE_SEPARATOR);
+        return [ parts.shift(), parts.join(BotCommandHandler.NAMESPACE_SEPARATOR) ];
     }
 
     handleMessage(message: UserMessage): boolean {
         let commandPartList = this.parseNamespacedCommand(message.Text);
 
-        if (commandPartList.length !== 2) {
+        if (commandPartList[1] === '') {
             return false;
         }
         
