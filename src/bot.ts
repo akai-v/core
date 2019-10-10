@@ -1,11 +1,11 @@
 import { BaseClient, ClientHandler } from "./client/base-client";
-import { EventEmitter } from "events";
 import { UserMessage } from "./message/user-message";
 import { BotCommandHandler } from "./command/bot-command-handler";
-import { BotStatusChangeEvent, BotMessageEvent } from "./bot-event";
+import { BotStatusChangeEvent, BotMessageEvent, BotEvent, BotCommandEvent } from "./bot-event";
 import { ModuleManager } from "./module/module-manager";
-import { User } from "./user/user";
+import { EventEmitter } from "eventemitter3";
 import { BotModule } from "./module/bot-module";
+import { Channel, User } from ".";
 
 /*
  * Created on Sun Oct 06 2019
@@ -120,6 +120,14 @@ export abstract class Bot extends EventEmitter {
         this.emit('stop');
     }
 
+    dispatchCommand(channel: Channel, sender: User, command: string): boolean {
+        return this.CommandHandler.dispatchCommand(channel, sender, command);
+    }
+
+    dispatchChat(channel: Channel, sender: User, text: string): UserMessage {
+        return channel.Client.dispatchChat(channel, sender, text);
+    }
+
     onMessage(message: UserMessage) {
         let event = new BotMessageEvent(this, message);
 
@@ -132,6 +140,7 @@ export abstract class Bot extends EventEmitter {
         this.ModuleManager.forEach((botModule: BotModule) => {
             botModule.emit('message', event);
         });
+
 
         if (event.Cancelled) {
             return;
@@ -151,12 +160,48 @@ export abstract class Bot extends EventEmitter {
 
     // EventEmitter override
 
-    on(event: 'status_message' | 'message' | 'stop' | 'start', listener: (...args: any[]) => void): this {
+    on(event: 'status_message', listener: (e: BotStatusChangeEvent) => void): this;
+
+    on(event: 'message', listener: (e: BotMessageEvent) => void): this;
+    on(event: 'command', listener: (e: BotCommandEvent) => void): this;
+
+    on(event: 'start', listener: () => void): this;
+    on(event: 'stop', listener: () => void): this;
+
+    on(event: string, listener: (...args: any[]) => void) {
         return super.on(event, listener);
     }
 
-    once(event: 'status_message' | 'message' | 'stop' | 'start', listener: (...args: any[]) => void): this {
+    once(event: 'status_message', listener: (e: BotStatusChangeEvent) => void): this;
+    
+    once(event: 'message', listener: (e: BotMessageEvent) => void): this;
+    once(event: 'command', listener: (e: BotCommandEvent) => void): this;
+
+    once(event: 'start', listener: () => void): this;
+    once(event: 'stop', listener: () => void): this;
+
+    once(event: string, listener: (...args: any[]) => void) {
         return super.once(event, listener);
+    }
+
+}
+
+export class DispatchedMessage extends UserMessage {
+    
+    get Editable(): boolean {
+        return false;
+    }
+    
+    get Deletable(): boolean {
+        return false;
+    }
+
+    editText(text: string): Promise<UserMessage> {
+        throw new Error("Cannot edit dispatched message.");
+    }
+
+    delete(): Promise<boolean> {
+        throw new Error("Cannot delete dispatched message.");
     }
 
 }

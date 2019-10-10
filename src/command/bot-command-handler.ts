@@ -1,6 +1,9 @@
 import { Bot } from "../bot";
 import { UserMessage } from "../message/user-message";
 import { BotModule } from "../module/bot-module";
+import { BotCommandEvent } from "../bot-event";
+import { User } from "../user/user";
+import { Channel } from "../channel/channel";
 
 /*
  * Created on Sun Oct 06 2019
@@ -11,6 +14,7 @@ import { BotModule } from "../module/bot-module";
 export class BotCommandHandler {
 
     static readonly NAMESPACE_SEPARATOR = '/';
+    static readonly ARGUMENT_SEPARATOR = ' ';
 
     private bot: Bot;
 
@@ -27,8 +31,21 @@ export class BotCommandHandler {
         return [ parts.shift(), parts.join(BotCommandHandler.NAMESPACE_SEPARATOR) ];
     }
 
+    parseCommand(text: string) {
+        let parts = text.split(BotCommandHandler.ARGUMENT_SEPARATOR);
+        return [ parts.shift(), parts.join(BotCommandHandler.ARGUMENT_SEPARATOR) ];
+    }
+
     handleMessage(message: UserMessage): boolean {
-        let commandPartList = this.parseNamespacedCommand(message.Text);
+        return this.handleCommandText(message.Channel, message.Sender, message.Text);
+    }
+
+    dispatchCommand(channel: Channel, sender: User, command: string): boolean {
+        return this.handleCommandText(channel, sender, command);
+    }
+
+    protected handleCommandText(channel: Channel, sender: User, text: string): boolean {
+        let commandPartList = this.parseNamespacedCommand(text);
 
         if (commandPartList[1] === '') {
             return false;
@@ -37,11 +54,21 @@ export class BotCommandHandler {
         let namespace = commandPartList[0];
         let commandPart = commandPartList[1];
 
+        let partParsed = this.parseCommand(commandPart);
+
+        let event = new BotCommandEvent(this.Bot, sender, channel, namespace, partParsed[0], partParsed[1]);
+
+        this.Bot.emit('command', event);
+
+        if (event.Cancelled) {
+            return false;
+        }
+
         let result = false;
 
         this.Bot.ModuleManager.forEach((botModule: BotModule) => {
             if (botModule.Namespace === namespace) {
-                let handled = botModule.CommandManager.processCommand(commandPart, this.Bot, message.Sender, message.Channel);
+                let handled = botModule.CommandManager.processCommandEvent(event);
 
                 if (!handled) {
                     return;

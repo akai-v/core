@@ -97,15 +97,19 @@ export class BotCommandEvent extends BotEventCancellable {
 
     private targetBot: Bot;
 
+    private dispatched: boolean;
+
     private sender: User;
 
     private channel: Channel;
+
+    private namespace: string;
     
     private command: string;
 
     private rawArgument: string;
 
-    constructor(targetBot: Bot, sender: User, channel: Channel, command: string, rawArgument: string) {
+    constructor(targetBot: Bot, sender: User, channel: Channel, namespace: string, command: string, rawArgument: string, dispatched: boolean = false) {
         super();
 
         this.targetBot = targetBot;
@@ -113,8 +117,12 @@ export class BotCommandEvent extends BotEventCancellable {
         this.sender = sender;
         this.channel = channel;
 
+        this.namespace = namespace;
+
         this.command = command;
         this.rawArgument = rawArgument;
+
+        this.dispatched = dispatched;
     }
 
     get TargetBot() {
@@ -129,12 +137,20 @@ export class BotCommandEvent extends BotEventCancellable {
         return this.channel;
     }
 
+    get Namespace() {
+        return this.namespace;
+    }
+
     get Command() {
         return this.command;
     }
 
     get RawArgument() {
         return this.rawArgument;
+    }
+
+    get Dispatched() {
+        return this.dispatched;
     }
 
 }

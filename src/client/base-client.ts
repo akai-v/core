@@ -1,4 +1,4 @@
-import { Bot } from "../bot";
+import { Bot, DispatchedMessage } from "../bot";
 import { UserMessage } from "../message/user-message";
 import { RichMessageTemplate } from "../message/template/rich-message-template";
 import { Channel } from "../channel/channel";
@@ -162,6 +162,14 @@ export abstract class BaseClient extends EventEmitter {
         return reqList;
     }
 
+    dispatchChat(channel: Channel, sender: User, text: string): UserMessage {
+        let message = new DispatchedMessage(sender, channel, text, []);
+
+        this.messageReceived(message);
+
+        return message;
+    }
+
     // Client implementions must call this method after they received message
     protected messageReceived(message: UserMessage) {
         let event = new ClientMessageEvent(message);
@@ -191,11 +199,15 @@ export abstract class BaseClient extends EventEmitter {
 
     // EventEmiiter overrides
 
-    on(event: | 'message', listener: (...args: any[]) => void): this {
+    on(event: 'message', listener: (e: ClientMessageEvent) => void): this;
+
+    on(event: string, listener: (...args: any[]) => void) {
         return super.on(event, listener);
     }
 
-    once(event: 'message', listener: (...args: any[]) => void): this {
+    once(event: 'message', listener: (e: ClientMessageEvent) => void): this;
+
+    once(event: string, listener: (...args: any[]) => void) {
         return super.once(event, listener);
     }
 

@@ -27,6 +27,18 @@ describe('Command handling', function () {
         expect(partList[1]).equal('testCommand');
     });
 
+    it('Bot global command handling', function(done) {
+        bot.once('command', (e: BotCommandEvent) => {
+            if (e.Namespace == 'aa' && e.Command == 'bb' && e.RawArgument == 'x y z') {
+                done();
+            } else {
+                done(new Error(`Expected namespace: aa, command: bb, expected arguments: a b c. Received namespace: ${e.Namespace}, command: ${e.Command}, arguments: ${e.RawArgument}`));
+            }
+        });
+
+        testClient.simulateMessageReceived('aa/bb x y z');
+    });
+
     it('Module command handling', function(done) {
         testModule.CommandManager.once('test', (e: BotCommandEvent) => {
             if (e.Command == 'test' && e.RawArgument == 'a b c') {
@@ -37,5 +49,17 @@ describe('Command handling', function () {
         });
 
         testClient.simulateMessageReceived('test/test a b c');
+    });
+
+    it('Module global command handling', function(done) {
+        testModule.once('command', (e: BotCommandEvent) => {
+            if (e.Command == 'test1' && e.RawArgument == 'd e f') {
+                done();
+            } else {
+                done(new Error(`Expected command: test1, expected arguments: d e f. Received command: ${e.Command}, arguments: ${e.RawArgument}`));
+            }
+        });
+
+        testClient.simulateMessageReceived('test/test1 d e f');
     });
 });

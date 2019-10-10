@@ -22,24 +22,28 @@ export class CommandManager extends EventEmitter {
         this.botModule = module;
     }
 
-    processCommand(message: string, targetBot: Bot, sender: User, channel: Channel): boolean {
-        let partList = message.split(' ');
-        let messagePart = [partList.shift(), partList.join(' ')];
+    processCommandEvent(e: BotCommandEvent): boolean {
+        this.botModule.emit('command', e);
 
-        let command = messagePart[0];
-        let args = messagePart[1];
+        let hasCommand = this.rawListeners(e.Command).length !== 0;
 
-        let hasCommand = this.rawListeners(command).length !== 0;
-
-        if (!hasCommand) {
+        if (!hasCommand || e.Cancelled) {
             return false;
         }
 
-        let event = new BotCommandEvent(targetBot, sender, channel, command, args);
+        this.emit(e.Command, e);
 
-        this.emit(command, event);
+        if (e.Cancelled) {
+            return false;
+        }
 
-        return !event.Cancelled;
+        return true;
+    }
+
+    dispatchCommand(bot: Bot, channel: Channel, sender: User, command: string, argument: string): boolean {
+        let event = new BotCommandEvent(bot, sender, channel, this.botModule.Namespace, command, argument);
+
+        return this.processCommandEvent(event);
     }
 
     // EventEmiiter overrides

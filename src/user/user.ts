@@ -41,11 +41,15 @@ export abstract class User extends EventEmitter {
 
     // EventEmiiter overrides
 
-    on(event: 'message', listener: (e: ClientMessageEvent) => void): this {
+    on(event: 'message', listener: (e: ClientMessageEvent) => void): this;
+
+    on(event: string, listener: (...args: any[]) => void) {
         return super.on(event, listener);
     }
 
-    once(event: 'message', listener: (e: ClientMessageEvent) => void): this {
+    once(event: 'message', listener: (e: ClientMessageEvent) => void): this;
+
+    once(event: string, listener: (...args: any[]) => void) {
         return super.once(event, listener);
     }
 
