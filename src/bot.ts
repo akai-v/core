@@ -165,8 +165,7 @@ export abstract class Bot extends EventEmitter {
     on(event: 'message', listener: (e: BotMessageEvent) => void): this;
     on(event: 'command', listener: (e: BotCommandEvent) => void): this;
 
-    on(event: 'start', listener: () => void): this;
-    on(event: 'stop', listener: () => void): this;
+    on(event: 'start' | 'stop', listener: () => void): this;
 
     on(event: string, listener: (...args: any[]) => void) {
         return super.on(event, listener);
@@ -177,8 +176,7 @@ export abstract class Bot extends EventEmitter {
     once(event: 'message', listener: (e: BotMessageEvent) => void): this;
     once(event: 'command', listener: (e: BotCommandEvent) => void): this;
 
-    once(event: 'start', listener: () => void): this;
-    once(event: 'stop', listener: () => void): this;
+    once(event: 'start' | 'stop', listener: () => void): this;
 
     once(event: string, listener: (...args: any[]) => void) {
         return super.once(event, listener);
