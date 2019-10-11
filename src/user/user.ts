@@ -38,6 +38,10 @@ export abstract class User extends EventEmitter {
     abstract get HasDMChannel(): boolean;
 
     abstract getDMChannel(): Promise<Channel>;
+    
+    abstract get HasAvatar(): boolean;
+    
+    abstract getAvatarURL(): Promise<string>;
 
     // EventEmiiter overrides
 
