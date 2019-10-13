@@ -132,6 +132,14 @@ export namespace Testing {
         get Connected() {
             return true;
         }
+
+        get HasAvatar() {
+            return false;
+        }
+    
+        async getAvatarURL(): Promise<string> {
+            throw new Error(`Test User doesn't have avatar`);
+        }
     
     }
     
@@ -152,6 +160,14 @@ export namespace Testing {
     
         async getDMChannel(): Promise<Channel> {
             return this.Client.TestChannel;
+        }
+
+        get HasAvatar() {
+            return false;
+        }
+    
+        async getAvatarURL(): Promise<string> {
+            throw new Error(`Test User doesn't have avatar`);
         }
     
     }
