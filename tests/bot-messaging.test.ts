@@ -11,7 +11,7 @@ describe('Message handling', function () {
     let bot = new Testing.TestBot();
 
     let testModule = new Testing.TestModule('test', 'test');
-    let testClient = new Testing.TestClient('message-testing-client');
+    let testClient = new Testing.TestClient({ clientId: 'message-testing-client' });
 
     testClient.start();
 

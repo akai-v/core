@@ -10,7 +10,7 @@ import { expect } from "chai";
 
 describe('Command handling', function () {
     let bot = new Testing.TestBot();
-    let testClient = new Testing.TestClient('command-testing-client');
+    let testClient = new Testing.TestClient({ clientId: 'command-testing-client' });
     let testModule = new Testing.TestModule('test', 'test');
 
     bot.ModuleManager.addModule(testModule);

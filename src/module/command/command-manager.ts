@@ -5,6 +5,7 @@ import { UserMessage } from "../../message/user-message";
 import { User } from "../../user/user";
 import { Channel } from "../../channel/channel";
 import { Bot } from "../../bot";
+import { CommandInfo } from "./command-info";
 
 /*
  * Created on Sun Oct 06 2019
@@ -16,10 +17,42 @@ export class CommandManager extends EventEmitter {
 
     private botModule: BotModule;
 
+    private commandList: CommandInfo[];
+
     constructor(module: BotModule) {
         super();
 
         this.botModule = module;
+
+        this.commandList = [];
+    }
+
+    get CommandList() {
+        return this.commandList.slice(0);
+    }
+
+    addCommand(command: CommandInfo) {
+        this.commandList.push(command);
+    }
+
+    hasCommand(command: CommandInfo): boolean {
+        return this.commandList.includes(command);
+    }
+
+    removeCommand(command: CommandInfo): boolean {
+        if (!this.hasCommand(command)) {
+            return false;
+        }
+
+        this.commandList.splice(this.commandList.indexOf(command), 1);
+    }
+
+    removeAllCommand() {
+        this.commandList = [];
+    }
+
+    forEach(func: (command: CommandInfo) => void) {
+        this.commandList.forEach(func);
     }
 
     processCommandEvent(e: BotCommandEvent): boolean {
@@ -37,7 +70,13 @@ export class CommandManager extends EventEmitter {
             return false;
         }
 
-        return true;
+        for (let command of this.commandList) {
+            if (command.CommandList.includes(e.Command)) {
+                command.onCommand(e);
+            }
+        }
+
+        return e.Cancelled;
     }
 
     dispatchCommand(bot: Bot, channel: Channel, sender: User, command: string, argument: string): boolean {
