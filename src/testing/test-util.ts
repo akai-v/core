@@ -23,13 +23,15 @@ export namespace Testing {
     
     }
     
-    export class TestClient extends BaseClient {
+    export class TestClient extends BaseClient { // Clients should export `${clientName}Client` like here
     
         private clientId: string;
         
         private testChannel: Channel;
     
-        constructor(clientId: string) {
+        constructor({ clientId }: {
+            clientId: string
+        }) { //All clients should receive object as params
             super();
     
             this.clientId = clientId;
