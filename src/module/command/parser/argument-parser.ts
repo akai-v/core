@@ -15,6 +15,10 @@ export interface ArgumentParser<T> {
 export class SpaceSplitedParser implements ArgumentParser<string[]> {
 
     parse(rawArgs: string): string[] {
+        if (rawArgs === '') {
+            return [];
+        }
+
         return rawArgs.split(' ');
     }
 
