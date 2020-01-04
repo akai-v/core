@@ -68,7 +68,14 @@ export class BotCommandHandler {
 
         this.Bot.ModuleManager.forEach((botModule: BotModule) => {
             if (botModule.Namespace === namespace) {
-                let handled = botModule.CommandManager.processCommandEvent(event);
+
+                let handled: boolean = false;
+
+                try {
+                    handled = botModule.CommandManager.processCommandEvent(event);
+                } catch (e) {
+                    console.log(`Error while handling command "${commandPart}" on module: ${botModule.Name}`);
+                }
 
                 if (!handled) {
                     return;
