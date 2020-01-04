@@ -26,3 +26,5 @@ export * from './module/command/command-info';
 export * from './module/command/parser/argument-parser';
 
 export * from './testing/test-util';
+
+export * from './io/network/request-helper';
