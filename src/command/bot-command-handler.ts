@@ -74,7 +74,7 @@ export class BotCommandHandler {
                 try {
                     handled = botModule.CommandManager.processCommandEvent(event);
                 } catch (e) {
-                    console.log(`Error while handling command "${commandPart}" on module: ${botModule.Name}`);
+                    console.log(`Error while handling command "${commandPart}" on module: ${botModule.Name}. ${e}`);
                 }
 
                 if (!handled) {

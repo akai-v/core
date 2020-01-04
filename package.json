@@ -1,6 +1,6 @@
 {
   "name": "@akaiv/core",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "description": "Akaiv core",
   "main": "dist/index.js",
   "scripts": {
