@@ -52,8 +52,8 @@ export abstract class Bot extends EventEmitter {
         return this.started;
     }
 
-    get ClientList() {
-        return this.clientMap.keys();
+    get ClientList(): BaseClient[] {
+        return Array.from(this.clientMap.keys());
     }
 
     get ModuleManager() {
