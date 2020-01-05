@@ -190,14 +190,8 @@ export abstract class Bot extends EventEmitter {
                         info => `${new Date().toLocaleString()} [${info.level.toUpperCase()}] - ${info.message}`)
                 }),
                 new winston.transports.Console({
-                    format: winston.format.colorize({
-                        level: true,
-                        colors: {
-                            info: 'white',
-                            error: 'red',
-                            warning: 'yellow'
-                        }
-                    })
+                    format: winston.format.printf(
+                        info => `${new Date().toLocaleString()} [${info.level.toUpperCase()}] - ${info.message}`)
                 })
             ]
         });
