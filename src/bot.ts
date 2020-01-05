@@ -150,25 +150,29 @@ export abstract class Bot extends EventEmitter {
     onMessage(message: UserMessage) {
         let event = new BotMessageEvent(this, message);
 
-        this.emit('message', event);
+        try {
+            this.emit('message', event);
 
-        if (event.Cancelled) {
-            return;
-        }
-
-        this.ModuleManager.forEach((botModule: BotModule) => {
-            botModule.emit('message', event);
-        });
-
-
-        if (event.Cancelled) {
-            return;
-        }
-
-        let isCommand = this.commandHandler.handleMessage(message);
-
-        if (isCommand) {
-            return;
+            if (event.Cancelled) {
+                return;
+            }
+    
+            this.ModuleManager.forEach((botModule: BotModule) => {
+                botModule.emit('message', event, this.moduleManager.getModuleLogger(botModule));
+            });
+    
+    
+            if (event.Cancelled) {
+                return;
+            }
+    
+            let isCommand = this.commandHandler.handleMessage(message);
+    
+            if (isCommand) {
+                return;
+            }
+        } catch (e) {
+            this.logger.error(`Error while handling message from ${message.Channel.IdentityId} - ${message.Sender.IdentityId} (${message.Sender.Name})`);
         }
     }
 
