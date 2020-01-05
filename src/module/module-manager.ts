@@ -1,6 +1,7 @@
 import { EventEmitter } from "events";
 import { BotModule } from "./bot-module";
 import { BotModuleEvent } from "../bot-event";
+import { ModuleLogger, BotLogger } from "../logger/logger";
 
 /*
  * Created on Sun Oct 06 2019
@@ -10,16 +11,16 @@ import { BotModuleEvent } from "../bot-event";
 
 export class ModuleManager extends EventEmitter {
 
-    private moduleList: BotModule[];
+    private moduleMap: Map<BotModule, ModuleLogger>;
 
-    constructor() {
+    constructor(private logger: BotLogger) {
         super();
 
-        this.moduleList = [];
+        this.moduleMap = new Map();
     }
 
     has(module: BotModule) {
-        return this.moduleList.includes(module);
+        return this.moduleMap.has(module);
     }
 
     addModule(module: BotModule): boolean {
@@ -27,7 +28,7 @@ export class ModuleManager extends EventEmitter {
             return false;
         }
         
-        this.moduleList.push(module);
+        this.moduleMap.set(module, new ModuleLogger(module, this.logger));
         this.emit('add', new BotModuleEvent(module));
 
         return true;
@@ -38,14 +39,26 @@ export class ModuleManager extends EventEmitter {
             return false;
         }
         
-        this.moduleList.splice(this.moduleList.indexOf(module), 1);
+        this.moduleMap.delete(module);
         this.emit('remove', new BotModuleEvent(module));
 
         return true;
     }
     
     forEach(func: (module: BotModule) => void) {
-        this.moduleList.forEach(func);
+        let modules = this.moduleMap.keys();
+
+        for (let module of modules) {
+            func(module);
+        }
+    }
+
+    getModuleLogger(module: BotModule): ModuleLogger {
+        if (!this.has(module)) {
+            throw new Error(`Module [ ${module.Name} ] is not registered module`);
+        }
+        
+        return this.moduleMap.get(module)!;
     }
 
     // EventEmitter override

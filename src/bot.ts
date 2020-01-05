@@ -35,6 +35,8 @@ export abstract class Bot extends EventEmitter {
     constructor(name: string, statusMessage: string = "", debugMode: boolean = false) {
         super();
 
+        this.logger = this.createLogger(debugMode);
+
         this.name = name;
         this.statusMessage = statusMessage;
 
@@ -43,9 +45,7 @@ export abstract class Bot extends EventEmitter {
         this.clientMap = new Map<BaseClient, ClientHandler<BaseClient>>();
 
         this.commandHandler = new BotCommandHandler(this);
-        this.moduleManager = new ModuleManager();
-
-        this.logger = this.createLogger(debugMode);
+        this.moduleManager = new ModuleManager(this.logger);
     }
 
     get StatusMessage() {
@@ -83,7 +83,14 @@ export abstract class Bot extends EventEmitter {
 
         let lastMessage = this.statusMessage;
         this.statusMessage = message;
-        this.emit('status_message', new BotStatusChangeEvent(this.logger, lastMessage, this.statusMessage));
+
+        this.onStatusMessageChanged(lastMessage, message);
+
+        this.emit('status_message', new BotStatusChangeEvent(lastMessage, this.statusMessage));
+    }
+
+    protected onStatusMessageChanged(lastMessage: string, newMessage: string) {
+
     }
 
     containsClient(client: BaseClient): boolean {

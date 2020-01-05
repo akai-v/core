@@ -66,15 +66,15 @@ export class BotCommandHandler {
 
         let result = false;
 
-        this.Bot.ModuleManager.forEach((botModule: BotModule) => {
+        this.bot.ModuleManager.forEach((botModule: BotModule) => {
             if (botModule.Namespace === namespace) {
 
                 let handled: boolean = false;
 
                 try {
-                    handled = botModule.CommandManager.processCommandEvent(event);
+                    handled = this.dispatchCommandEvent(event, botModule);
                 } catch (e) {
-                    console.log(`Error while handling command "${commandPart}" on module: ${botModule.Name}. ${e}`);
+                    this.bot.Logger.error(`Error while handling command "${commandPart}" on module: ${botModule.Name}. ${e}`);
                 }
 
                 if (!handled) {
@@ -88,6 +88,10 @@ export class BotCommandHandler {
         });
 
         return result;
+    }
+
+    dispatchCommandEvent(event: BotCommandEvent, botModule: BotModule): boolean {
+        return botModule.CommandManager.processCommandEvent(event, this.bot.ModuleManager.getModuleLogger(botModule));
     }
 
 

@@ -1,6 +1,8 @@
 import { CommandManager } from "./command/command-manager";
 import { EventEmitter } from "events";
 import { BotMessageEvent, BotCommandEvent } from "../bot-event";
+import { ModuleLogger } from "../logger/logger";
+import { Logger } from "winston";
 
 /*
  * Created on Sun Oct 06 2019
@@ -30,15 +32,15 @@ export abstract class BotModule extends EventEmitter {
 
     // EventEmiiter overrides
 
-    on(event: 'message', listener: (e: BotMessageEvent) => void): this;
-    on(event: 'command', listener: (e: BotCommandEvent) => void): this;
+    on(event: 'message', listener: (e: BotMessageEvent, logger: Logger) => void): this;
+    on(event: 'command', listener: (e: BotCommandEvent, logger: Logger) => void): this;
 
     on(event: string, listener: (...args: any[]) => void) {
         return super.on(event, listener);
     }
 
-    once(event: 'message', listener: (e: BotMessageEvent) => void): this;
-    once(event: 'command', listener: (e: BotCommandEvent) => void): this;
+    once(event: 'message', listener: (e: BotMessageEvent, logger: Logger) => void): this;
+    once(event: 'command', listener: (e: BotCommandEvent, logger: Logger) => void): this;
 
     once(event: string, listener: (...args: any[]) => void) {
         return super.once(event, listener);

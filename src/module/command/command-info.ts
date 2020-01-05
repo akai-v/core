@@ -1,4 +1,5 @@
 import { BotCommandEvent } from "../../bot-event";
+import { Logger } from "../../logger/logger";
 
 /*
  * Created on Sat Oct 26 2019
@@ -14,6 +15,6 @@ export interface CommandInfo {
 
     readonly Usage: string;
 
-    onCommand(e: BotCommandEvent): void;
+    onCommand(e: BotCommandEvent, logger: Logger): void;
 
 }

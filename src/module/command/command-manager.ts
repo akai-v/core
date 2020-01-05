@@ -6,6 +6,7 @@ import { User } from "../../user/user";
 import { Channel } from "../../channel/channel";
 import { Bot } from "../../bot";
 import { CommandInfo } from "./command-info";
+import { Logger } from "../../logger/logger";
 
 /*
  * Created on Sun Oct 06 2019
@@ -55,10 +56,10 @@ export class CommandManager extends EventEmitter {
         this.commandList.forEach(func);
     }
 
-    processCommandEvent(e: BotCommandEvent): boolean {
-        this.botModule.emit('command', e);
+    processCommandEvent(e: BotCommandEvent, logger: Logger): boolean {
+        this.botModule.emit('command', e, logger);
 
-        this.emit(e.Command, e);
+        this.emit(e.Command, e, logger);
 
         if (e.Cancelled) {
             return false;
@@ -66,7 +67,7 @@ export class CommandManager extends EventEmitter {
 
         for (let command of this.commandList) {
             if (command.CommandList.includes(e.Command)) {
-                command.onCommand(e);
+                command.onCommand(e, logger);
             }
         }
 
@@ -76,16 +77,16 @@ export class CommandManager extends EventEmitter {
     dispatchCommand(bot: Bot, channel: Channel, sender: User, command: string, argument: string): boolean {
         let event = new BotCommandEvent(bot, sender, channel, this.botModule.Namespace, command, argument);
 
-        return this.processCommandEvent(event);
+        return bot.CommandHandler.dispatchCommandEvent(event, this.botModule);
     }
 
     // EventEmiiter overrides
 
-    on(event: string | symbol, listener: (commandEvent: BotCommandEvent) => void): this {
+    on(event: string | symbol, listener: (commandEvent: BotCommandEvent, logger: Logger) => void): this {
         return super.on(event, listener);
     }
 
-    once(event: string | symbol, listener: (commandEvent: BotCommandEvent) => void): this {
+    once(event: string | symbol, listener: (commandEvent: BotCommandEvent, logger: Logger) => void): this {
         return super.once(event, listener);
     }
 }

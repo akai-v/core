@@ -32,7 +32,7 @@ export abstract class BaseClient extends EventEmitter {
 
         this.botHandlerList = [];
 
-        this.clientLogger = new ClientLogger(this.botHandlerList);
+        this.clientLogger = new ClientLogger(this, this.botHandlerList);
 
         this.defaultRichHandlerList = [];
         this.richHandlerList = [];

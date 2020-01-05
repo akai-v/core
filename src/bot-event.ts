@@ -28,14 +28,8 @@ export interface MessageEvent {
 
 export class BotEvent {
 
-    private botLogger: BotLogger;
-
-    constructor(botLogger: BotLogger) {
-        this.botLogger = botLogger;
-    }
-
-    get BotLogger() {
-        return this.botLogger;
+    constructor() {
+        
     }
 
 }
@@ -48,8 +42,8 @@ export class BotEventCancellable extends BotEvent implements Cancellable {
 
     private cancelled: boolean;
 
-    constructor(botLogger: BotLogger) {
-        super(botLogger);
+    constructor() {
+        super();
 
         this.cancelled = false;
     }
@@ -98,7 +92,7 @@ export class BotMessageEvent extends BotEventCancellable implements MessageEvent
     private targetBot: Bot;
 
     constructor(targetBot: Bot, message: UserMessage) {
-        super(targetBot.Logger);
+        super();
 
         this.message = message;
 
@@ -120,8 +114,8 @@ export class BotStatusChangeEvent extends BotEventCancellable {
     private lastStatus: string;
     private currentStatus: string;
 
-    constructor(botLogger: BotLogger, lastStatus: string, currentStatus: string) {
-        super(botLogger);
+    constructor(lastStatus: string, currentStatus: string) {
+        super();
 
         this.lastStatus = lastStatus;
         this.currentStatus = currentStatus;
@@ -154,7 +148,7 @@ export class BotCommandEvent extends BotEventCancellable {
     private rawArgument: string;
 
     constructor(targetBot: Bot, sender: User, channel: Channel, namespace: string, command: string, rawArgument: string, dispatched: boolean = false) {
-        super(targetBot.Logger);
+        super();
 
         this.targetBot = targetBot;
 
