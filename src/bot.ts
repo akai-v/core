@@ -6,6 +6,10 @@ import { ModuleManager } from "./module/module-manager";
 import { EventEmitter } from "eventemitter3";
 import { BotModule } from "./module/bot-module";
 import { Channel, User } from ".";
+import * as winston from "winston";
+import { Logger } from "winston";
+import * as DailyRotateFile from "winston-daily-rotate-file";
+import { BotLogger } from "./logger/logger";
 
 /*
  * Created on Sun Oct 06 2019
@@ -20,13 +24,15 @@ export abstract class Bot extends EventEmitter {
 
     private started: boolean;
 
+    private logger: BotLogger;
+
     private clientMap: Map<BaseClient, ClientHandler<BaseClient>>;
     
     private commandHandler: BotCommandHandler;
 
     private moduleManager: ModuleManager;
 
-    constructor(name: string, statusMessage: string = "") {
+    constructor(name: string, statusMessage: string = "", debugMode: boolean = false) {
         super();
 
         this.name = name;
@@ -38,6 +44,8 @@ export abstract class Bot extends EventEmitter {
 
         this.commandHandler = new BotCommandHandler(this);
         this.moduleManager = new ModuleManager();
+
+        this.logger = this.createLogger(debugMode);
     }
 
     get StatusMessage() {
@@ -50,6 +58,10 @@ export abstract class Bot extends EventEmitter {
 
     get Started() {
         return this.started;
+    }
+
+    get Logger() {
+        return this.logger;
     }
 
     get ClientList(): BaseClient[] {
@@ -71,7 +83,7 @@ export abstract class Bot extends EventEmitter {
 
         let lastMessage = this.statusMessage;
         this.statusMessage = message;
-        this.emit('status_message', new BotStatusChangeEvent(lastMessage, this.statusMessage));
+        this.emit('status_message', new BotStatusChangeEvent(this.logger, lastMessage, this.statusMessage));
     }
 
     containsClient(client: BaseClient): boolean {
@@ -151,6 +163,33 @@ export abstract class Bot extends EventEmitter {
         if (isCommand) {
             return;
         }
+    }
+
+    // Customize logger creation here
+    // THIS WORKS SOMEHOW WTF nice
+    protected createLogger(debugMode: boolean): BotLogger {
+        return winston.createLogger({
+            level: debugMode ? 'debug' : 'info',
+            format: winston.format.colorize(),
+            transports: [
+                new DailyRotateFile({
+                    filename : 'log/akaiv-runtime.log',
+                    zippedArchive: true,
+                    format: winston.format.printf(
+                        info => `${new Date().toLocaleString()} [${info.level.toUpperCase()}] - ${info.message}`)
+                }),
+                new winston.transports.Console({
+                    format: winston.format.colorize({
+                        level: true,
+                        colors: {
+                            info: 'white',
+                            error: 'red',
+                            warning: 'yellow'
+                        }
+                    })
+                })
+            ]
+        });
     }
 
     // register clients here

@@ -8,6 +8,7 @@ export * from './bot-event';
 export * from './bot'
 
 export * from './client/base-client';
+export * from './logger/logger';
 
 export * from './user/user';
 export * from './channel/channel';

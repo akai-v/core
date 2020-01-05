@@ -4,6 +4,7 @@ import { User } from "./user/user";
 import { Channel } from "./channel/channel";
 import { Bot } from "./bot";
 import { BaseClient } from "./client/base-client";
+import { BotLogger } from "./logger/logger";
 
 /*
  * Created on Sun Oct 06 2019
@@ -11,20 +12,44 @@ import { BaseClient } from "./client/base-client";
  * Copyright (c) storycraft. Licensed under the MIT Licence.
  */
 
+export interface Cancellable {
+
+    readonly Cancelled: boolean;
+
+    cancel(): void;
+
+}
+
+export interface MessageEvent {
+
+    readonly Message: UserMessage;
+
+}
+
 export class BotEvent {
 
-    constructor() {
+    private botLogger: BotLogger;
 
+    constructor(botLogger: BotLogger) {
+        this.botLogger = botLogger;
+    }
+
+    get BotLogger() {
+        return this.botLogger;
     }
 
 }
 
-export class BotEventCancellable extends BotEvent {
+export class ClientEvent {
+
+}
+
+export class BotEventCancellable extends BotEvent implements Cancellable {
 
     private cancelled: boolean;
 
-    constructor() {
-        super();
+    constructor(botLogger: BotLogger) {
+        super(botLogger);
 
         this.cancelled = false;
     }
@@ -39,34 +64,53 @@ export class BotEventCancellable extends BotEvent {
 
 }
 
-export class ClientMessageEvent extends BotEventCancellable {
+export class ClientMessageEvent extends ClientEvent implements Cancellable, MessageEvent {
 
     private message: UserMessage;
+
+    private cancelled: boolean;
 
     constructor(message: UserMessage) {
         super();
 
         this.message = message;
+
+        this.cancelled = false;
     }
 
     get Message() {
         return this.message;
     }
 
+    get Cancelled() {
+        return this.cancelled;
+    }
+
+    cancel() {
+        this.cancelled = true;
+    }
+
 }
 
-export class BotMessageEvent extends ClientMessageEvent {
+export class BotMessageEvent extends BotEventCancellable implements MessageEvent {
 
+    private message: UserMessage;
     private targetBot: Bot;
 
     constructor(targetBot: Bot, message: UserMessage) {
-        super(message);
+        super(targetBot.Logger);
+
+        this.message = message;
 
         this.targetBot = targetBot;
     }
 
     get TargetBot() {
         return this.targetBot;
+    }
+
+    get Message() {
+        return this.message;
     }
 
 }
@@ -76,8 +120,8 @@ export class BotStatusChangeEvent extends BotEventCancellable {
     private lastStatus: string;
     private currentStatus: string;
 
-    constructor(lastStatus: string, currentStatus: string) {
-        super();
+    constructor(botLogger: BotLogger, lastStatus: string, currentStatus: string) {
+        super(botLogger);
 
         this.lastStatus = lastStatus;
         this.currentStatus = currentStatus;
@@ -110,7 +154,7 @@ export class BotCommandEvent extends BotEventCancellable {
     private rawArgument: string;
 
     constructor(targetBot: Bot, sender: User, channel: Channel, namespace: string, command: string, rawArgument: string, dispatched: boolean = false) {
-        super();
+        super(targetBot.Logger);
 
         this.targetBot = targetBot;
 
@@ -155,13 +199,17 @@ export class BotCommandEvent extends BotEventCancellable {
 
 }
 
-export class BotModuleEvent extends BotEvent {
+export interface ModuleEvent {
+
+    readonly Module: BotModule;
+    
+}
+
+export class BotModuleEvent implements ModuleEvent {
     
     private module: BotModule;
 
     constructor(module: BotModule) {
-        super();
-
         this.module = module;
     }
 

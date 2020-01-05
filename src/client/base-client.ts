@@ -6,6 +6,7 @@ import { EventEmitter } from "events";
 import { ClientMessageEvent } from "../bot-event";
 import { User } from "../user/user";
 import { TemplateHandler, MultiTextTemplateHandler, DefaultTemplateHandler } from "../message/template/template-handler";
+import { ClientLogger } from "../logger/logger";
 
 /*
  * Created on Sun Oct 06 2019
@@ -15,7 +16,9 @@ import { TemplateHandler, MultiTextTemplateHandler, DefaultTemplateHandler } fro
 
 export abstract class BaseClient extends EventEmitter {
 
-    private botHandlerList: ClientHandler<BaseClient>[];
+    private clientLogger: ClientLogger;
+
+    private readonly botHandlerList: ClientHandler<BaseClient>[];
 
     private defaultRichHandlerList: TemplateHandler<BaseClient>[];
     private richHandlerList: TemplateHandler<BaseClient>[];
@@ -28,6 +31,8 @@ export abstract class BaseClient extends EventEmitter {
         super();
 
         this.botHandlerList = [];
+
+        this.clientLogger = new ClientLogger(this.botHandlerList);
 
         this.defaultRichHandlerList = [];
         this.richHandlerList = [];
@@ -52,7 +57,7 @@ export abstract class BaseClient extends EventEmitter {
         this.defaultRichHandlerList.push(new DefaultTemplateHandler(this));
     }
 
-    get ClientUser() {
+    get ClientUser(): ClientUser | null {
         return this.clientUser;
     }
 
@@ -62,6 +67,10 @@ export abstract class BaseClient extends EventEmitter {
 
     get RichHandlerList() {
         return this.richHandlerList;
+    }
+
+    get Logger() {
+        return this.clientLogger;
     }
 
     protected get BotHandlerList() {
@@ -225,6 +234,10 @@ export abstract class ClientHandler<T extends BaseClient> {
 
     get Bot() {
         return this.bot;
+    }
+
+    get BotLogger() {
+        return this.bot.Logger;
     }
 
     get Client() {
