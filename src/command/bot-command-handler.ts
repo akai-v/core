@@ -69,14 +69,8 @@ export class BotCommandHandler {
         this.bot.ModuleManager.forEach((botModule: BotModule) => {
             if (botModule.Namespace === namespace) {
 
-                let handled: boolean = false;
-
-                try {
-                    handled = this.dispatchCommandEvent(event, botModule);
-                } catch (e) {
-                    this.bot.Logger.error(`Error while handling command "${commandPart}" on module: ${botModule.Name}. ${e}`);
-                }
-
+                let handled = this.dispatchCommandEvent(event, botModule);
+                
                 if (!handled) {
                     return;
                 }
@@ -91,7 +85,12 @@ export class BotCommandHandler {
     }
 
     dispatchCommandEvent(event: BotCommandEvent, botModule: BotModule): boolean {
-        return botModule.CommandManager.processCommandEvent(event, this.bot.ModuleManager.getModuleLogger(botModule));
+        try {
+            return botModule.CommandManager.processCommandEvent(event, this.bot.ModuleManager.getModuleLogger(botModule));
+        } catch(e) {
+            this.bot.Logger.error(`Error while handling command "${event.Command}" on module: ${botModule.Name}. ${e}`);
+            return false;
+        }
     }
 
 
