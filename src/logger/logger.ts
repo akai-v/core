@@ -32,6 +32,42 @@ export interface SubLogger extends Logger {
 
 }
 
+export class NamedSubLogger implements SubLogger {
+
+    constructor(private logger: Logger, private prefix: string, private name: string) {
+
+    }
+
+    info(message: string) {
+        this.logger.info(this.getFormattedMessage(message));
+    }
+
+    warn(message: string) {
+        this.warning(message);
+    }
+
+    warning(message: string) {
+        this.logger.warning(this.getFormattedMessage(message));
+    }
+
+    debug(message: string) {
+        this.logger.debug(this.getFormattedMessage(message));
+    }
+
+    error(message: string) {
+        this.logger.error(this.getFormattedMessage(message));
+    }
+
+    get Parent() {
+        return this.logger;
+    }
+
+    getFormattedMessage(message: string) {
+        return `${this.prefix}[ ${this.name} ] - ${message}`;
+    }
+
+}
+
 export class ClientLogger implements SubLogger {
 
     constructor(private client: BaseClient, private handlerList: ClientHandler<BaseClient>[]) {
@@ -70,34 +106,10 @@ export class ClientLogger implements SubLogger {
 
 }
 
-export class ModuleLogger implements SubLogger {
+export class ModuleLogger extends NamedSubLogger {
 
-    constructor(private module: BotModule, private botLogger: BotLogger) {
-        
-    }
-
-    info(message: string) {
-        this.botLogger.info(this.getFormattedMessage(message));
-    }
-
-    warn(message: string) {
-        this.warning(message);
-    }
-
-    warning(message: string) {
-        this.botLogger.warning(this.getFormattedMessage(message));
-    }
-
-    debug(message: string) {
-        this.botLogger.debug(this.getFormattedMessage(message));
-    }
-
-    error(message: string) {
-        this.botLogger.error(this.getFormattedMessage(message));
-    }
-
-    getFormattedMessage(message: string): string {
-        return `module[ ${this.module.Name} ] - ${message}`;
+    constructor(module: BotModule, botLogger: BotLogger) {
+        super(botLogger, 'module', module.Name);
     }
 
 }
