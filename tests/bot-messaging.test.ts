@@ -7,11 +7,13 @@ import { expect } from "chai";
  * Copyright (c) storycraft. Licensed under the MIT Licence.
  */
 
-describe('Message handling', function () {
+describe('Message handling', async () => {
     let bot = new Testing.TestBot();
 
     let testModule = new Testing.TestModule('test', 'test');
     let testClient = new Testing.TestClient({ clientId: 'message-testing-client' });
+
+    await testModule.load();
 
     testClient.start();
 

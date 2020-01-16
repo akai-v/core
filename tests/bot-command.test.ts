@@ -8,10 +8,12 @@ import { expect } from "chai";
  */
 
 
-describe('Command handling', function () {
+describe('Command handling', async () => {
     let bot = new Testing.TestBot();
     let testClient = new Testing.TestClient({ clientId: 'command-testing-client' });
     let testModule = new Testing.TestModule('test', 'test');
+
+    await testModule.load();
 
     bot.ModuleManager.addModule(testModule);
     bot.registerClient(testClient);
