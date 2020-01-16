@@ -45,6 +45,15 @@ export class ModuleManager extends EventEmitter {
         return true;
     }
     
+    forEachLoaded(func: (module: BotModule) => void) {
+        let modules = this.moduleMap.keys();
+
+        for (let module of modules) {
+            if (module.Loaded)
+                func(module);
+        }
+    }
+
     forEach(func: (module: BotModule) => void) {
         let modules = this.moduleMap.keys();
 

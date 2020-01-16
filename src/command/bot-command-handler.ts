@@ -66,7 +66,7 @@ export class BotCommandHandler {
 
         let result = false;
 
-        this.bot.ModuleManager.forEach((botModule: BotModule) => {
+        this.bot.ModuleManager.forEachLoaded((botModule: BotModule) => {
             if (botModule.Namespace === namespace) {
 
                 let handled = this.dispatchCommandEvent(event, botModule);

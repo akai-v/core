@@ -157,7 +157,7 @@ export abstract class Bot extends EventEmitter {
                 return;
             }
     
-            this.ModuleManager.forEach((botModule: BotModule) => {
+            this.ModuleManager.forEachLoaded((botModule: BotModule) => {
                 botModule.emit('message', event, this.moduleManager.getModuleLogger(botModule));
             });
     

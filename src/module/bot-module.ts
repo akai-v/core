@@ -14,14 +14,22 @@ export abstract class BotModule extends EventEmitter {
 
     private commandManager: CommandManager;
 
+    private loaded: boolean;
+
     constructor() {
         super();
 
         this.commandManager = new CommandManager(this);
+
+        this.loaded = false;
     }
 
     get CommandManager() {
         return this.commandManager;
+    }
+
+    get Loaded() {
+        return this.loaded;
     }
 
     abstract get Name(): string;
@@ -29,6 +37,24 @@ export abstract class BotModule extends EventEmitter {
     abstract get Namespace(): string;
 
     abstract get Description(): string;
+
+    protected async loadModule(): Promise<void> {
+
+    }
+
+    protected async unloadModule(): Promise<void> {
+
+    }
+
+    async load(): Promise<void> {
+        await this.loadModule();
+        this.loaded = true;
+    }
+
+    async unload(): Promise<void> {
+        await this.loadModule();
+        this.loaded = false;
+    }
 
     // EventEmiiter overrides
 
