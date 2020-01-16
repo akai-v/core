@@ -10,6 +10,8 @@ import { UserMessage } from "../user-message";
  */
 
 export interface RichMessageTemplate {
+
+    readonly TemplateName: string;
     
     toString(): string;
 
@@ -21,6 +23,10 @@ export class MarkdownMessageTemplate implements RichMessageTemplate {
         
     }
 
+    get TemplateName() {
+        return 'markdown';
+    }
+
 }
 
 export class MultiTextTemplate implements RichMessageTemplate {
@@ -29,6 +35,10 @@ export class MultiTextTemplate implements RichMessageTemplate {
 
     constructor(...textList: string[]) {
         this.textList = textList;
+    }
+
+    get TemplateName() {
+        return 'multi-text';
     }
 
     get TextList() {
@@ -50,6 +60,10 @@ export class AttachmentTemplate implements RichMessageTemplate {
     constructor(text: string, ...attachmentList: TemplateAttachment[]) {
         this.text = text;
         this.attachmentList = attachmentList;
+    }
+
+    get TemplateName() {
+        return 'attachment';
     }
 
     get AttachmentList() {
