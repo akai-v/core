@@ -7,9 +7,10 @@ import { EventEmitter } from "eventemitter3";
 import { BotModule } from "./module/bot-module";
 import { Channel, User } from ".";
 import * as winston from "winston";
-import { Logger } from "winston";
 import * as DailyRotateFile from "winston-daily-rotate-file";
 import { BotLogger } from "./logger/logger";
+import firebase = require("firebase");
+import { FirebaseDatabase } from "./database/database";
 
 /*
  * Created on Sun Oct 06 2019
@@ -32,7 +33,10 @@ export abstract class Bot extends EventEmitter {
 
     private moduleManager: ModuleManager;
 
-    constructor(name: string, statusMessage: string = "", debugMode: boolean = false) {
+    private firebaseApp: firebase.app.App | null;
+    private firebaseDB: FirebaseDatabase | null;
+
+    constructor(name: string, statusMessage: string = "", firebaseConfig?: any, debugMode: boolean = false) {
         super();
 
         this.logger = this.createLogger(debugMode);
@@ -46,6 +50,22 @@ export abstract class Bot extends EventEmitter {
 
         this.commandHandler = new BotCommandHandler(this);
         this.moduleManager = new ModuleManager(this.logger);
+
+        this.firebaseApp = null;
+        this.firebaseDB = null;
+
+        if (firebaseConfig) {
+            this.firebaseApp = firebase.initializeApp(firebaseConfig);
+            this.firebaseDB = new FirebaseDatabase(this.firebaseApp.firestore().collection(this.name), 'root');
+        }
+    }
+
+    get FirebaseApp(): firebase.app.App | null {
+        return this.firebaseApp;
+    }
+
+    get FirebaseDatabase(): FirebaseDatabase | null {
+        return this.firebaseDB;
     }
 
     get StatusMessage() {

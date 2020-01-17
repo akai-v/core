@@ -10,6 +10,8 @@ export * from './bot'
 export * from './client/base-client';
 export * from './logger/logger';
 
+export * from './database/database';
+
 export * from './user/user';
 export * from './channel/channel';
 
