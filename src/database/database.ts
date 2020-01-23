@@ -13,7 +13,7 @@ export type DatabaseValue = DatabaseValuePrimitive | DatabaseValueObject | Array
 
 export interface Database<K = string, V = DatabaseValue> {
 
-    getEntry(key: K): DatabaseEntry<K, V>;
+    getEntry(key: K): Promise<DatabaseEntry<K, V>>;
 
 }
 
