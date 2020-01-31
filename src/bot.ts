@@ -56,7 +56,7 @@ export abstract class Bot extends EventEmitter {
 
         if (firebaseConfig) {
             this.firebaseApp = firebase.initializeApp(firebaseConfig);
-            this.firebaseDB = new FirebaseDatabase(this.firebaseApp.firestore().collection(this.name), 'root');
+            this.firebaseDB = new FirebaseDatabase(this.firebaseApp.database());
         }
     }
 

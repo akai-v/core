@@ -3,6 +3,7 @@ import { RichMessageTemplate } from "../message/template/rich-message-template";
 import { UserMessage } from "../message/user-message";
 import { EventEmitter } from "events";
 import { ClientMessageEvent } from "../bot-event";
+import { User } from "../user/user";
 
 /*
  * Created on Sun Oct 06 2019
@@ -44,6 +45,8 @@ export abstract class Channel extends EventEmitter {
     async sendRichTemplate(template: RichMessageTemplate): Promise<UserMessage[]> {
         return this.client.sendRichTemplate(template, this);
     }
+
+    abstract getUserList(): Promise<User[]>;
 
     // EventEmiiter overrides
 

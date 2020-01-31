@@ -33,43 +33,41 @@ export interface DatabaseEntry<K = string, V = DatabaseValue> {
 
 export class FirebaseEntry implements DatabaseEntry<string, DatabaseValue> {
 
-    private document: Firebase.firestore.DocumentReference;
-    private snapshot: Firebase.firestore.DocumentSnapshot | null;
+    private reference: Firebase.database.Reference;
+    private snapshot: Firebase.database.DataSnapshot | null;
 
-    constructor(document: Firebase.firestore.DocumentReference) {
-        this.document = document;
+    constructor(reference: Firebase.database.Reference) {
+        this.reference = reference;
         this.snapshot = null;
 
-        this.document.onSnapshot((next) => this.snapshot = next);
+        this.reference.on('child_changed', (updated) => this.snapshot = updated);
     }
 
     get EntryName() {
-        return this.document.id;
+        return this.reference.key;
     }
 
     async has(key: string): Promise<boolean> {
-        return !!(await this.get(key));
+        return !!(this.snapshot.child(key).exists());
     }
 
     async getEntry(key: string): Promise<FirebaseEntry> {
-        return new FirebaseEntry(this.document.collection('objects').doc(key));
+        return new FirebaseEntry(this.reference.child(key));
     }
 
     async get(key: string): Promise<DatabaseValue | undefined> {
         if (!this.snapshot) {
-            this.snapshot = await this.document.get();
+            this.snapshot = await this.reference.once('value');
         }
 
-        let val = this.snapshot.get(key);
+        let val = this.snapshot.val()[key];
 
         return val;
     }
 
     async set(key: string, value: DatabaseValue): Promise<boolean> {
-        await this.document.set({
+        await this.reference.update({
             key: value
-        }, {
-            merge: true
         });
 
         return true;
@@ -77,18 +75,14 @@ export class FirebaseEntry implements DatabaseEntry<string, DatabaseValue> {
 
 }
 
-export class FirebaseDatabase extends FirebaseEntry {
+export class FirebaseDatabase extends FirebaseEntry implements Database {
 
-    private collection: Firebase.firestore.CollectionReference;
+    private database: Firebase.database.Database;
 
-    constructor(collection: Firebase.firestore.CollectionReference, rootDocument: string) {
-        super(collection.doc(rootDocument));
+    constructor(database: Firebase.database.Database) {
+        super(database.ref());
 
-        this.collection = collection;
-    }
-
-    get CollectionRef() {
-        return this.collection;
+        this.database = database;
     }
 
 }

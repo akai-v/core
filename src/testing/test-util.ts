@@ -98,9 +98,15 @@ export namespace Testing {
     }
     
     export class TestChannel extends Channel {
-    
+
+        public userList: User[] = [];
+
         get Name(): string {
             return 'TestChannel';
+        }
+
+        async getUserList() {
+            return this.userList;
         }
     
     }
