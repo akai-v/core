@@ -19,7 +19,7 @@ export interface Database<K = string, V = DatabaseValue> {
 
 export interface DatabaseEntry<K = string, V = DatabaseValue> {
 
-    readonly EntryName: string;
+    readonly Name: string;
 
     getEntry(key: K): Promise<DatabaseEntry<K, V>>;
 
@@ -28,27 +28,25 @@ export interface DatabaseEntry<K = string, V = DatabaseValue> {
     get(key: K): Promise<V | undefined>;
     set(key: K, value: V): Promise<boolean>;
 
+    delete(): Promise<void>;
+
 }
 
 
 export class FirebaseEntry implements DatabaseEntry<string, DatabaseValue> {
 
-    private reference: Firebase.database.Reference;
-    private snapshot: Firebase.database.DataSnapshot | null;
+    protected reference: Firebase.database.Reference;
 
     constructor(reference: Firebase.database.Reference) {
         this.reference = reference;
-        this.snapshot = null;
-
-        this.reference.on('child_changed', (updated) => this.snapshot = updated);
     }
 
-    get EntryName() {
+    get Name() {
         return this.reference.key;
     }
 
     async has(key: string): Promise<boolean> {
-        return !!(this.snapshot.child(key).exists());
+        return !!(this.get(key));
     }
 
     async getEntry(key: string): Promise<FirebaseEntry> {
@@ -56,11 +54,7 @@ export class FirebaseEntry implements DatabaseEntry<string, DatabaseValue> {
     }
 
     async get(key: string): Promise<DatabaseValue | undefined> {
-        if (!this.snapshot) {
-            this.snapshot = await this.reference.once('value');
-        }
-
-        let val = this.snapshot.val()[key];
+        let val = await this.reference.child(key).once('value');
 
         return val;
     }
@@ -71,6 +65,10 @@ export class FirebaseEntry implements DatabaseEntry<string, DatabaseValue> {
         });
 
         return true;
+    }
+
+    async delete() {
+        await this.reference.remove();
     }
 
 }
