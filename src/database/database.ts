@@ -60,9 +60,7 @@ export class FirebaseEntry implements DatabaseEntry<string, DatabaseValue> {
     }
 
     async set(key: string, value: DatabaseValue): Promise<boolean> {
-        await this.reference.update({
-            key: value
-        });
+        await this.reference.child(key).set(value);
 
         return true;
     }
