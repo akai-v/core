@@ -46,7 +46,7 @@ export class FirebaseEntry implements DatabaseEntry<string, DatabaseValue> {
     }
 
     async has(key: string): Promise<boolean> {
-        return !!(this.get(key));
+        return !!(await this.get(key));
     }
 
     async getEntry(key: string): Promise<FirebaseEntry> {
@@ -56,7 +56,7 @@ export class FirebaseEntry implements DatabaseEntry<string, DatabaseValue> {
     async get(key: string): Promise<DatabaseValue | undefined> {
         let val = await this.reference.child(key).once('value');
 
-        return val;
+        return val.val();
     }
 
     async set(key: string, value: DatabaseValue): Promise<boolean> {
