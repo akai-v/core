@@ -171,8 +171,8 @@ export abstract class BaseClient extends EventEmitter {
         return reqList;
     }
 
-    dispatchChat(channel: Channel, sender: User, text: string): UserMessage {
-        let message = new DispatchedMessage(sender, channel, text, []);
+    dispatchChat(channel: Channel, sender: User, text: string, timestamp: number = Date.now()): UserMessage {
+        let message = new DispatchedMessage(sender, channel, text, timestamp, []);
 
         this.messageReceived(message);
 
