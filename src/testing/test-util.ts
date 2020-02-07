@@ -80,7 +80,7 @@ export namespace Testing {
         }
     
         async sendText(text: string, channel: Channel): Promise<UserMessage[]> {
-            return [ new TestMessage(this.ClientUser, channel, text) ];
+            return [ new TestMessage(this.ClientUser, channel, text, Date.now()) ];
         }
 
         async simulateSendText(text: string, channel: Channel = this.TestChannel) {
@@ -88,7 +88,7 @@ export namespace Testing {
         }
 
         simulateMessageReceived(text: string, channel: Channel = this.TestChannel) {
-            this.messageReceived(new TestMessage(this.ClientUser, channel, text));
+            this.messageReceived(new TestMessage(this.ClientUser, channel, text, Date.now()));
         }
     
     }
@@ -122,7 +122,7 @@ export namespace Testing {
         }
     
         async editText(text: string): Promise<UserMessage> {
-            return new TestMessage(this.Sender, this.Channel, text, this.AttachmentList);
+            return new TestMessage(this.Sender, this.Channel, text, Date.now(), this.AttachmentList);
         }
     
         async delete() {

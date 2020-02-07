@@ -19,12 +19,16 @@ export abstract class UserMessage {
     private text: string;
     private attachmentList: MessageAttachment[];
 
-    constructor(sender: User, channel: Channel, text: string, attachmentList: MessageAttachment[] = []) {
+    private timestamp: number;
+
+    constructor(sender: User, channel: Channel, text: string, timestamp: number, attachmentList: MessageAttachment[] = []) {
         this.sender = sender;
 
         this.channel = channel;
 
         this.text = text;
+
+        this.timestamp = timestamp;
 
         this.attachmentList = attachmentList;
     }
@@ -43,6 +47,10 @@ export abstract class UserMessage {
 
     get AttachmentList() {
         return this.attachmentList;
+    }
+
+    get Timestamp() {
+        return this.timestamp;
     }
 
     abstract get Editable(): boolean;
