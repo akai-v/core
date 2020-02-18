@@ -31,3 +31,5 @@ export * from './module/command/parser/argument-parser';
 export * from './testing/test-util';
 
 export * from './io/network/request-helper';
+
+export * from './util/async-util';

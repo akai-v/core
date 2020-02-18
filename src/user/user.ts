@@ -43,6 +43,10 @@ export abstract class User extends EventEmitter {
     
     abstract getAvatarURL(): Promise<string>;
 
+    get IsClientUser(): boolean {
+        return false;
+    }
+
     // EventEmiiter overrides
 
     on(event: 'message', listener: (e: ClientMessageEvent) => void): this;

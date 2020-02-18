@@ -9,7 +9,9 @@ import * as Firebase from 'firebase';
 
 export type DatabaseValuePrimitive = string | number | boolean | null;
 export type DatabaseValueObject = object;
-export type DatabaseValue = DatabaseValuePrimitive | DatabaseValueObject | Array<DatabaseValuePrimitive | DatabaseValueObject>;
+export type DatabaseValue = DatabaseValuePrimitive | DatabaseValueObject;
+
+export const PATH_SEPARATOR = '/';
 
 export interface Database<K = string, V = DatabaseValue> {
 
@@ -28,7 +30,8 @@ export interface DatabaseEntry<K = string, V = DatabaseValue> {
     get(key: K): Promise<V | undefined>;
     set(key: K, value: V): Promise<boolean>;
 
-    delete(): Promise<void>;
+    deleteEntry(): Promise<void>;
+    deleteKey(key: K): Promise<void>;
 
 }
 
@@ -65,8 +68,12 @@ export class FirebaseEntry implements DatabaseEntry<string, DatabaseValue> {
         return true;
     }
 
-    async delete() {
+    async deleteEntry(): Promise<void> {
         await this.reference.remove();
+    }
+
+    async deleteKey(key: string): Promise<void> {
+        await this.reference.child(key).remove();
     }
 
 }

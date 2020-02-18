@@ -77,6 +77,10 @@ export abstract class BaseClient extends EventEmitter {
         return this.botHandlerList;
     }
 
+    get MaxMessageTextLength() {
+        return 1000;
+    }
+
     containsHandler(handler: ClientHandler<BaseClient>) {
         return this.botHandlerList.includes(handler);
     }
@@ -260,6 +264,10 @@ export abstract class ClientUser extends User {
 
     getDMChannel(): Promise<Channel> {
         throw new Error(`ClientUser cannot create DM`);
+    }
+
+    get IsClientUser(): boolean {
+        return true;
     }
 
 }
