@@ -77,6 +77,8 @@ export abstract class BaseClient extends EventEmitter {
         return this.botHandlerList;
     }
 
+
+    // DEPRECATED
     get MaxMessageTextLength() {
         return 1000;
     }

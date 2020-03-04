@@ -57,9 +57,19 @@ export class CommandManager extends EventEmitter {
     }
 
     processCommandEvent(e: BotCommandEvent, logger: Logger): boolean {
-        this.botModule.emit('command', e, logger);
+        this.emit('command', e, logger);
+
+        if (e.Cancelled) {
+            return false;
+        }
 
         this.emit(e.Command, e, logger);
+
+        if (e.Cancelled) {
+            return false;
+        }
+
+        this.botModule.emit('command', e, logger);
 
         if (e.Cancelled) {
             return false;

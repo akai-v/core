@@ -114,3 +114,19 @@ export class TemplateAttachment {
         this.buffer = buffer;
     }
 }
+
+export class TitledLinkImageTemplate implements RichMessageTemplate {
+
+    constructor(private title: string, private imageURL: string, private hrefURL: string) {
+
+    }
+
+    get TemplateName() {
+        return 'LINKIMAGE';
+    }
+
+    toString() {
+        return `${this.title}\n\n${this.imageURL}\n${this.hrefURL}`;
+    }
+
+}
