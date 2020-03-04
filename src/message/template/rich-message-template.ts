@@ -125,6 +125,30 @@ export class TitledLinkImageTemplate implements RichMessageTemplate {
         return 'LINKIMAGE';
     }
 
+    get Title() {
+        return this.title;
+    }
+
+    set Title(title) {
+        this.title = title;
+    }
+
+    get ImageURL() {
+        return this.imageURL;
+    }
+
+    set ImageURL(url) {
+        this.imageURL = url;
+    }
+
+    get HrefURL() {
+        return this.hrefURL;
+    }
+
+    set HrefURL(url) {
+        this.hrefURL = url;
+    }
+
     toString() {
         return `${this.title}\n\n${this.imageURL}\n${this.hrefURL}`;
     }
