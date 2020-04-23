@@ -168,9 +168,11 @@ export abstract class Bot extends EventEmitter {
     }
 
     onMessage(message: UserMessage) {
-        let event = new BotMessageEvent(this, message);
-
         try {
+            let isCommand = this.commandHandler.handleMessage(message);
+
+            let event = new BotMessageEvent(this, message, isCommand);
+
             this.emit('message', event);
 
             if (event.Cancelled) {
@@ -185,12 +187,7 @@ export abstract class Bot extends EventEmitter {
             if (event.Cancelled) {
                 return;
             }
-    
-            let isCommand = this.commandHandler.handleMessage(message);
-    
-            if (isCommand) {
-                return;
-            }
+
         } catch (e) {
             this.logger.error(`Error while handling message from ${message.Channel.IdentityId} - ${message.Sender.IdentityId} (${message.Sender.Name})`);
         }

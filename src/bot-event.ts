@@ -90,13 +90,16 @@ export class BotMessageEvent extends BotEventCancellable implements MessageEvent
 
     private message: UserMessage;
     private targetBot: Bot;
+    private isCommand: boolean;
 
-    constructor(targetBot: Bot, message: UserMessage) {
+    constructor(targetBot: Bot, message: UserMessage, isCommand: boolean) {
         super();
 
         this.message = message;
 
         this.targetBot = targetBot;
+
+        this.isCommand = isCommand;
     }
 
     get TargetBot() {
@@ -105,6 +108,10 @@ export class BotMessageEvent extends BotEventCancellable implements MessageEvent
 
     get Message() {
         return this.message;
+    }
+
+    get IsCommand() {
+        return this.isCommand;
     }
 
 }
