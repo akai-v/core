@@ -69,9 +69,9 @@ export class BotCommandHandler {
         this.bot.ModuleManager.forEachLoaded((botModule: BotModule) => {
             if (botModule.Namespace === namespace) {
 
-                let handled = this.dispatchCommandEvent(event, botModule);
+                let cancelled = this.dispatchCommandEvent(event, botModule);
                 
-                if (!handled) {
+                if (cancelled) {
                     return;
                 }
 
